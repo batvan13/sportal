@@ -22,3 +22,9 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('admin/home', 'HomeController@adminHome')->name('admin.home')->middleware('is_admin');
+
+Route::group(['middleware' => ['auth']], function () {
+    
+    Route::resource('entity', 'EntityController');
+
+});
