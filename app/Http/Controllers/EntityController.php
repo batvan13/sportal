@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Entity;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class EntityController extends Controller
 {
@@ -16,8 +17,6 @@ class EntityController extends Controller
     public function index()
     {
         $entity = auth()->user()->entitys()->latest()->paginate(10);
-
-
 
         return view('entity.index',compact('entity'));
     }
@@ -66,7 +65,9 @@ class EntityController extends Controller
      */
     public function show($id)
     {
-        //
+        $entity = Entity::find($id);
+
+        return view('entity.show',compact('entity'));
     }
 
     /**
@@ -77,7 +78,9 @@ class EntityController extends Controller
      */
     public function edit($id)
     {
-        //
+        $entity = Entity::find($id);
+
+        return view('entity.edit',compact('entity'));
     }
 
     /**
@@ -89,7 +92,19 @@ class EntityController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            ]);
+        // $entity->user_id=$request->get('user_id');
+        $entity = Entity::find($id);
+        
+        $entity->title=$request->get('title');
+        $entity->description_short=$request->get('description_short');
+        $entity->description=$request->get('description');
+
+        $entity->save();
+
+        return redirect()->route('entity.index');
     }
 
     /**
@@ -100,6 +115,9 @@ class EntityController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $entity = Entity::find($id);
+
+        $entity->delete();
+        return redirect()->back();
     }
 }
